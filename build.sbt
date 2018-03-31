@@ -1,6 +1,6 @@
 name := "akka-faddish-mailbox"
-
-version := "0.1"
+organization := "com.opticdev"
+version := "0.1.0"
 
 scalaVersion := "2.12.4"
 
