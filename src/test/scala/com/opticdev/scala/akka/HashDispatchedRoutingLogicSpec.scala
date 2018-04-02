@@ -13,7 +13,7 @@ class HashDispatchedRoutingLogicSpec extends FunSpec {
 
   val routees = scala.collection.immutable.IndexedSeq(MockRoutee("GREEN"), MockRoutee("RED"), MockRoutee("BLUE"), MockRoutee("WHITE"), MockRoutee("BLACK"))
 
-  lazy val testLogic = new HashDispatchedRoutingLogic({
+  lazy val testLogic = HashDispatchedRoutingLogic({
     case a: ParseJob => Some(a.filePath)
     case _ => None
   })

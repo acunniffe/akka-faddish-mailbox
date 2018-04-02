@@ -7,7 +7,7 @@ import akka.routing._
 
 import scala.util.{Random, Try}
 
-class HashDispatchedRoutingLogic(getMessageKey: (Any) => Option[String]) extends RoutingLogic {
+case class HashDispatchedRoutingLogic(getMessageKey: (Any) => Option[String]) extends RoutingLogic {
   def select(message: Any, routees: immutable.IndexedSeq[Routee]): Routee = {
     if (routees.isEmpty) return NoRoutee
 

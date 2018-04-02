@@ -50,5 +50,38 @@ my-mailbox {
 val actorRef = system.actorOf(Props[TestActor].withDispatcher("my-mailbox"))
 ```
 
+## Router Logic
+If you use a standard Akka router the Faddish Mailbox won't do you much good. If Worker A gets Doc1 v1, then Worker B gets Doc1 v2, etc you end up with the same problem as before. For this reason we've included our own RouterLogic called `HashDispatchedRoutingLogic`.
+
+This routing logic behaves the same as a random router with one key difference: it behaves deterministically for messages with a unique key. `HashDispatchedRoutingLogic` guarantees that messages with the same unique keys (ie ones processing /path/to/fileA) always are routed to the same worker as they come in. The algorithm also guarantees a quasi-uniform distribution of keys (k) over any number of workers (w) to avoid processing biases.
+
+Each instance of `HashDispatchedRoutingLogic` takes an function that gets unique keys from the various message types your router needs to support. If you return `None` than that message type will be randomly delegated to a worker.
+
+```scala
+HashDispatchedRoutingLogic({
+    case a: ParseJob => Some(a.filePath)
+    case _ => None
+})
+```
+
+Then create your router:
+```scala
+class ParseSupervisorActor()(implicit actorCluster: ActorCluster) extends Actor {
+    var router = {
+        val routees = Vector.fill(SGConstants.parseWorkers) {
+          val r = context.actorOf(WorkerActor.props())
+          context watch r
+          ActorRefRoutee(r)
+        }
+        Router(HashDispatchedRoutingLogic({
+                   case a: ParseJob => Some(a.filePath)
+                   case _ => None
+        }), routees)
+    }
+...
+}
+```
+
+
 ## License
 MIT
