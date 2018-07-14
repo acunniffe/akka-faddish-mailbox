@@ -6,7 +6,7 @@ Use case: Long running tasks are very expensive to queue up, especially if their
 
 It's also expensive to check/filter all the messages already in an Akka Queue so there's no built-in functionality for this. If you're considering using this library the cost of checking for duplicate/now-invalid tasks ahead of your new message should be less than the cost of running those tasks anyway.
 
-At Optic we use Actors as part of our pipeline to parse/analyse source code. When a user edits their code new messages are queued. Due to the nature of our connections to IDEs denouncing wasn't feasible. For a while we were parsing many variants of the same file and throwing out the old versions. This custom mailbox ensures that we do the minimal amount of work every time.
+At Optic we use Actors as part of our pipeline to parse/analyse source code. When a user edits their code new messages are queued. Due to the nature of our connections to IDEs debouncing wasn't feasible. For a while we were parsing many variants of the same file and throwing out the old versions. This custom mailbox ensures that we do the minimal amount of work every time.
 
 ## Usage
 1. Include from maven `"com.opticdev.akka" %% "akka-faddish-mailbox" % "0.1.0"`
